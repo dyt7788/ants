@@ -423,10 +423,19 @@ class Water(Place):
         its health to 0."""
         # BEGIN Problem 10
         "*** YOUR CODE HERE ***"
+        super().add_insect(insect)
+        if not insect.is_watersafe:
+            Insect.reduce_health(insect, insect.armor)
         # END Problem 10
 
 # BEGIN Problem 11
 # The ScubaThrower class
+class ScubaThrower(ThrowerAnt):
+    """ScubaThower is water proof"""
+    name = 'Scuba'
+    food_cost = 6
+    implemented =True
+    is_watersafe = True
 # END Problem 11
 
 # BEGIN Problem 12
