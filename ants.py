@@ -1,6 +1,7 @@
 """CS 61A presents Ants Vs. SomeBees."""
 
 import random
+from tokenize import Triple
 from ucb import main, interact, trace
 from collections import OrderedDict
 
@@ -399,6 +400,18 @@ class BodyguardAnt(ContainerAnt):
 
 # BEGIN Problem 9
 # The TankAnt class
+class TankAnt(ContainerAnt):
+
+    name='Tank'
+    damage=1
+    food_cost=6
+    implemented=True
+    def __init__(self,armor=2):
+        super().__init__(self, armor)
+    def action(self, gamestate):
+        for bee in self.place.bees.copy():
+            Insect.reduce_health(bee,self.damage)
+        super().action(gamestate)
 # END Problem 9
 
 
