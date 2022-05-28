@@ -159,7 +159,7 @@ class Ant(Insect):#蚂蚁类
         """Double this ants's damage, if it has not already been doubled."""
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
-
+        
         # END Problem 12
 
 
@@ -449,7 +449,8 @@ class QueenAnt(Ant):  # You should change this line
     food_cost = 7
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 12
-    implemented = False   # Change to True to view in the GUI
+    implemented = True  # Change to True to view in the GUI
+    queen_deployed = False
     # END Problem 12
 
     @classmethod
@@ -460,6 +461,12 @@ class QueenAnt(Ant):  # You should change this line
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        # 如果可以构造，则返回 Ant 类的新实例，否则返回 None。
+        # 记得调用超类的construct()方法！
+        if cls.name in gamestate.ant_types:
+            return None
+        else:   
+            return Ant.construct(gamestate)
         # END Problem 12
 
     def action(self, gamestate):
@@ -468,6 +475,21 @@ class QueenAnt(Ant):  # You should change this line
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        if self.impostor:#如果女王被打败了游戏也结束了
+            Ant.reduce_health(self, self.armor)
+        else:
+            super().action(gamestate)
+            curr_place = self.place.exit#当前的位置等于出口
+            while curr_place is not None:#不等于空
+                if curr_place.ant and not curr_place.ant.buffed:
+                    curr_place.ant.damage = curr_place.ant.damage*2
+                    curr_place.ant.buffed = True
+                if isinstance(curr_place.ant, ContainerAnt) \
+                and curr_place.ant.contained_ant\
+                and not curr_place.ant.contained_ant.buffed:
+                    curr_place.ant.contained_ant.damage = curr_place.ant.contained_ant.damage*2#伤害加2
+                    curr_place.ant.contained_ant.buffed = True
+                curr_place = curr_place.exit
         # END Problem 12
 
     def reduce_health(self, amount):
@@ -476,7 +498,15 @@ class QueenAnt(Ant):  # You should change this line
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        Ant.reduce_armor(self, amount)
+        if self.armor <= 0 and not self.impostor:
+            bees_win()
         # END Problem 12
+    def remove_from(self, place):
+        if not self.impostor:
+            pass
+        else:
+            super().remove_from(place)
 
 
 class AntRemover(Ant):
@@ -642,7 +672,17 @@ class LaserAnt(ThrowerAnt):
 ##################
 # Bees Extension #
 ##################
+def bees_win():
+    """Signal that Bees win."""
+    raise BeesWinException()
 
+class GameOverException(Exception):
+    """Base game over Exception."""
+    pass
+
+class BeesWinException(GameOverException):
+    """Exception to signal that the bees win."""
+    pass
 class Wasp(Bee):
     """Class of Bee that has higher damage."""
     name = 'Wasp'
