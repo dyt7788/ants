@@ -347,14 +347,16 @@ class ContainerAnt(Ant):
         super().__init__(*args, **kwargs)
         self.ant_contained = None
 
-    def can_contain(self, other):
+    def can_contain(self, other):#判断是否可以包含其它蚂蚁
         # BEGIN Problem 8
         "*** YOUR CODE HERE ***"
+        return self.contained_ant is None and not isinstance(other, ContainerAnt)
         # END Problem 8
 
     def store_ant(self, ant):
         # BEGIN Problem 8
         "*** YOUR CODE HERE ***"
+        self.store_ant=ant
         # END Problem 8
 
     def remove_ant(self, ant):
@@ -375,6 +377,8 @@ class ContainerAnt(Ant):
     def action(self, gamestate):
         # BEGIN Problem 8
         "*** YOUR CODE HERE ***"
+        if self.contained_ant is not None:#如果自身保护了其它蚂蚁
+            self.contained_ant.action(gamestate)
         # END Problem 8
 
 
@@ -385,8 +389,13 @@ class BodyguardAnt(ContainerAnt):
     food_cost = 4
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 8
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    def __init__(self, armor=2):
+        super().__init__(armor)
     # END Problem 8
+
+
+
 
 # BEGIN Problem 9
 # The TankAnt class
