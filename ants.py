@@ -273,7 +273,7 @@ class FireAnt(Ant):
         """Create an Ant with an ARMOR quantity."""
         Ant.__init__(self, armor)
 
-    def reduce_armor(self, amount):
+    def reduce_health(self, amount):
         """Reduce armor by AMOUNT, and remove the FireAnt from its place if it
         has no armor remaining.
 
@@ -288,14 +288,14 @@ class FireAnt(Ant):
                 if bee.armor > amount:#如果生命值大于伤害值就保留
                     remaining_bees.append(bee)
             for bee in self.place.bees.copy():
-                Insect.reduce_armor(bee, amount)#减少蜜蜂的伤害
+                Insect.reduce_health(bee, amount)#减少蜜蜂的伤害
             self.place.bees = remaining_bees
         reflected_damage(amount)
         print("DEBUG: remaining bees armor", [bee.armor for bee in self.place.bees])
         if self.armor <= amount:#自身生命值小于伤害
             reflected_damage(self.damage)
             print("DEBUG: remaining bees armor", [bee.armor for bee in self.place.bees])
-        Ant.reduce_armor(self, amount)
+        Ant.reduce_health(self, amount)
         # END Problem 5
 
 # BEGIN Problem 6
@@ -305,13 +305,35 @@ class WallAnt(Ant):
     name = 'Wall'
     food_cost = 4
     implemented = True
-    def __init__(self, armor=4):
+    def __init__(self, armor=4):#生命值是4
         super().__init__(armor)
 # END Problem 6
-
+def rANTdom_else_none(s):
+    """Return a random element of sequence S, or return None if S is empty."""
+    assert isinstance(s, list), "rANTdom_else_none's argument should be a list but was a %s" % type(s).__name__
+    if s:
+        return random.choice(s)
 # BEGIN Problem 7
 # The HungryAnt Class
-
+class HungryAnt(Ant):
+    name='Hungry'
+    food_cost=4
+    time_to_digest=3#给时间去消化 这段时间不能再吃
+    implemented=True
+    def __init__(self, armor=1):#生命值是1
+        super().__init__(armor)
+        self.digesting=0#用来标记第几回合
+    def eat_bee(self,bee):#吃掉蜜蜂 
+        Insect.reduce_health(bee,bee.armor)
+    def action(self, gamestate):#活动 当吃完了就能继续消灭蜜蜂
+        if self.digesting>0:
+            self.digesting-=1
+        else:
+            target=rANTdom_else_none(self.place.bees)
+            if target is not None:
+                self.eat_bee(target)
+                self.digesting=self.time_to_digest
+    
 # END Problem 7
 
 
