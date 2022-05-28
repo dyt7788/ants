@@ -189,8 +189,8 @@ class ThrowerAnt(Ant):
     damage = 1
     # ADD/OVERRIDE CLASS ATTRIBUTES HERE
     food_cost = 3
-    min_range = 0
-    max_range = float('inf')
+    min_range = 0#默认最小攻击范围
+    max_range = float('inf')#默认的最大攻击范围
 
     def nearest_bee(self,beehive):
         """Return the nearest Bee in a Place that is not the HIVE, connected to
@@ -208,7 +208,7 @@ class ThrowerAnt(Ant):
             if len(place.bees) > 0:
                 break
             place = place.entrance
-            curr_range += 1
+            curr_range += 1#攻击范围加一
         return random_bee(self.place.bees)  # REPLACE THIS LINE
         # END Problem 3 and 4
 
@@ -238,7 +238,7 @@ class ShortThrower(ThrowerAnt):
 
     name = 'Short'
     food_cost = 2
-    max_range = 3
+    max_range = 3#最大攻击范围
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
     implemented = True   # Change to True to view in the GUI
@@ -250,7 +250,7 @@ class LongThrower(ThrowerAnt):
 
     name = 'Long'
     food_cost = 2
-    min_range = 5
+    min_range = 5#最小攻击范围
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
     implemented = True   # Change to True to view in the GUI
@@ -284,21 +284,19 @@ class FireAnt(Ant):
         "*** YOUR CODE HERE ***"
         def reflected_damage(amount):
             remaining_bees = []
-            for bee in self.place.bees:
-                if bee.armor > amount:
+            for bee in self.place.bees:#遍历在当前位置的蜜蜂列表
+                if bee.armor > amount:#如果生命值大于伤害值就保留
                     remaining_bees.append(bee)
             for bee in self.place.bees.copy():
-                Insect.reduce_armor(bee, amount)
+                Insect.reduce_armor(bee, amount)#减少蜜蜂的伤害
             self.place.bees = remaining_bees
-
         reflected_damage(amount)
         print("DEBUG: remaining bees armor", [bee.armor for bee in self.place.bees])
-        if self.armor <= amount:
+        if self.armor <= amount:#自身生命值小于伤害
             reflected_damage(self.damage)
             print("DEBUG: remaining bees armor", [bee.armor for bee in self.place.bees])
         Ant.reduce_armor(self, amount)
         # END Problem 5
-
 
 # BEGIN Problem 6
 # The WallAnt class
